@@ -43,7 +43,7 @@ Next, under the "Kernel" menu click "Restart Kernel and Run All Cells..."
 
 ## License
 
-The Maternal Health Risk Classifier report contained herein are licensed under the [Attribution-NonCommerical-ShareAlike 4.0 International (CC BY-NC-SA 4.0) License](https://creativecommons.org/licenses/by-nc-sa/4.0/). See [the license file](LICENSE.md) for more information. If you re-use this, please provide attribution and link to this webpage. The software code contained within this repository is licensed under the MIT license. See [the license file](LICENSE.md) for more information.  
+The Maternal Health Risk Classifier report contained herein are licensed under the [Attribution-NonCommerical-ShareAlike 4.0 International (CC BY-NC-SA 4.0) License](https://creativecommons.org/licenses/by-nc-sa/4.0/). See [the license file](LICENSE) for more information. If you re-use this, please provide attribution and link to this webpage. The software code contained within this repository is licensed under the MIT license. See [the license file](LICENSE) for more information.  
 
 ## References
 
