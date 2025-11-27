@@ -41,7 +41,11 @@ Open `notebooks/health_analysis.ipynb` in Jupyter Lab you just launhed and under
 
 1. To shut down the container and clean up the resources, 
 type `Cntrl` + `C` in the terminal
-where you launched the container, and then type `docker compose rm`
+where you launched the container, and enter the following command:
+
+``` 
+make stop
+```
 
 ## Dependencies
 
