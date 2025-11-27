@@ -1,8 +1,19 @@
-FROM quay.io/jupyter/minimal-notebook:afe30f0c9ad8
+FROM condaforge/miniforge3:latest
 
-COPY conda-linux-64.lock /tmp/conda-linux-64.lock
+# copy the lockfile into the container
+COPY conda-lock.yml conda-lock.yml
 
-RUN conda update --quiet --file /tmp/conda-linux-64.lock
-RUN conda clean --all -y -f
-RUN fix-permissions "${CONDA_DIR}"
-RUN fix-permissions "/home/${NB_USER}"
+# setup conda-lock and install packages from lockfile
+RUN conda install -n base -c conda-forge conda-lock -y
+RUN conda-lock install -n dockerlock conda-lock.yml
+
+# expose JupyterLab port
+EXPOSE 8888
+
+# sets the default working directory
+# this is also specified in the compose file
+WORKDIR /workplace
+
+# run JupyterLab on container start
+# uses the jupyterlab from the install environment
+CMD ["conda", "run", "--no-capture-output", "-n", "dockerlock", "jupyter", "lab", "--ip=0.0.0.0", "--port=8888", "--no-browser", "--allow-root", "--IdentityProvider.token=''", "--ServerApp.password=''"]
