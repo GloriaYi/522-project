@@ -16,7 +16,7 @@ The data set used in this project consists of health conditions of pregnant indi
  
 ## Report
 
-The report can be found [here](https://github.com/GloriaYi/Maternal-Health-Risk-Classifier/blob/b950e2f3587a7426919951b268e1d8431d6e8d91/notebooks/health_analysis.pdf)
+The report can be found [here](https://github.com/GloriaYi/Maternal-Health-Risk-Classifier/blob/main/notebooks/health_analysis.pdf).
 
 ## Usage
 
