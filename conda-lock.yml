@@ -13,10 +13,10 @@
 version: 1
 metadata:
   content_hash:
-    linux-64: b90b6c17f11f48dca1e8b0225a92a2b6a1d395f2e31c5655b0068f5d2e5f1e46
-    osx-arm64: c4a49b8e5f402c2641f76dd04259417342999ae063bfe64d91750e00d48a2afb
-    osx-64: 155ca2577a87d8321691d57f1aa55dfa8e238e2a907bc03fff04055e5fc7b69b
-    win-64: 45fced3e984eb79c2c0a0e9ff390899c1cb42edc92fc9e2e666087bdc9a12d14
+    linux-64: e0714d9c79ca62e6b441db260239a1af13f4d11a9705128eac7bfcfe76c16880
+    osx-arm64: dca494a9b2b155a79be1cffd9aed3a9aa76ef853ef3042703ffae1bc03a17efb
+    osx-64: 1dede94a58ed16055cc470921cc8e09c26486acaf7a4202542c71849a4f3d885
+    win-64: 5af55d1fa6a215a45587e14a662e377a772b5ee62152919745d20907a4b556f6
     linux-aarch64: 901bed79453768e3b98a46ae4da1523162a8d887dc7d6a7c2270f318c06da2de
   channels:
   - url: conda-forge
@@ -17094,6 +17094,54 @@ package:
   hash:
     md5: 180f6ee9579c0c6111af5a5638686a64
     sha256: 93daa6ead03ff50b6366c6389d268f46d490ad50724a312c2ba59dbd6b6e2415
+  category: main
+  optional: false
+- name: tabulate
+  version: 0.9.0
+  manager: conda
+  platform: linux-64
+  dependencies:
+    python: '>=3.9'
+  url: https://conda.anaconda.org/conda-forge/noarch/tabulate-0.9.0-pyhd8ed1ab_2.conda
+  hash:
+    md5: 959484a66b4b76befcddc4fa97c95567
+    sha256: 090023bddd40d83468ef86573976af8c514f64119b2bd814ee63a838a542720a
+  category: main
+  optional: false
+- name: tabulate
+  version: 0.9.0
+  manager: conda
+  platform: osx-64
+  dependencies:
+    python: '>=3.9'
+  url: https://conda.anaconda.org/conda-forge/noarch/tabulate-0.9.0-pyhd8ed1ab_2.conda
+  hash:
+    md5: 959484a66b4b76befcddc4fa97c95567
+    sha256: 090023bddd40d83468ef86573976af8c514f64119b2bd814ee63a838a542720a
+  category: main
+  optional: false
+- name: tabulate
+  version: 0.9.0
+  manager: conda
+  platform: osx-arm64
+  dependencies:
+    python: '>=3.9'
+  url: https://conda.anaconda.org/conda-forge/noarch/tabulate-0.9.0-pyhd8ed1ab_2.conda
+  hash:
+    md5: 959484a66b4b76befcddc4fa97c95567
+    sha256: 090023bddd40d83468ef86573976af8c514f64119b2bd814ee63a838a542720a
+  category: main
+  optional: false
+- name: tabulate
+  version: 0.9.0
+  manager: conda
+  platform: win-64
+  dependencies:
+    python: '>=3.9'
+  url: https://conda.anaconda.org/conda-forge/noarch/tabulate-0.9.0-pyhd8ed1ab_2.conda
+  hash:
+    md5: 959484a66b4b76befcddc4fa97c95567
+    sha256: 090023bddd40d83468ef86573976af8c514f64119b2bd814ee63a838a542720a
   category: main
   optional: false
 - name: tbb
