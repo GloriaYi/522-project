@@ -40,10 +40,16 @@ Open `notebooks/health_analysis.ipynb` in Jupyter Lab you just launhed and under
 
 ### Clean up
 
-1. To shut down the container and clean up the resources, enter the following command:
+1. To shut down the container and clean up the resources, enter the following command to stop the Docker compose services:
 
 ``` 
 make stop
+```
+
+2. Enter the following command to stop the Docker compose services:
+
+``` 
+make remove
 ```
 
 ## Developer notes
