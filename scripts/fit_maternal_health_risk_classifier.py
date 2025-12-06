@@ -27,28 +27,36 @@ from sklearn.preprocessing import StandardScaler
 
 def main(training_data, preprocessor, pipeline_to, plot_to, seed):
     """
-    Train and tune a maternal health risk classifier pipeline.
+    Train and tune an SVC-based maternal health risk classification pipeline.
 
-    This function loads training data and a preprocessing object, optionally drops
-    specified columns, and validates the dataset for anomalous feature–label and
-    feature–feature correlations. It then fits an SVC classifier using
-    10-fold cross-validation optimized for the Recall score, saves the resulting trained
-    pipeline, and exports a plot showing model performance across k values.
+    This function loads the training dataset, constructs a preprocessing and SVC
+    classification pipeline, and performs hyperparameter tuning using randomized
+    search with 10-fold cross-validation. The search optimizes the weighted recall
+    score across a range of 'C' and 'gamma' values sampled from log-uniform
+    distributions. The best-performing model is saved as a serialized pipeline.
+
+    Additionally, the function generates and saves a heatmap showing the top
+    10 hyperparameter combinations ranked by cross-validated performance.
 
     Parameters
     ----------
     training_data : str
-        Path to the CSV file containing the training dataset.
+        Path to the CSV file containing the training dataset with features and
+        the 'RiskLevel' target column.
+
     preprocessor : str
-        Path to a serialized preprocessing object (pickle file).
-    columns_to_drop : str
-        Optional path to a CSV listing columns to drop from the training data.
+        (Unused in current implementation.) Path to a serialized preprocessing
+        object. The function instead constructs a new StandardScaler-based
+        preprocessing pipeline internally.
+
     pipeline_to : str
-        Directory where the trained pipeline object will be saved.
+        Directory where the trained SVC pipeline will be saved as a pickle file.
+
     plot_to : str
-        Directory where the diagnostic plot (k vs. F2 score) will be saved.
+        Directory where the hyperparameter tuning heatmap will be saved.
+
     seed : int
-        Random seed for reproducibility.
+        Random seed for reproducibility of data-related operations.
     """
     np.random.seed(seed)
     train_df = pd.read_csv(training_data)
