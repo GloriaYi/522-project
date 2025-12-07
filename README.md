@@ -38,6 +38,20 @@ make up
 3. To run the analysis, open a terminal and run the following commands:
 
 ```
+python scripts/download_data.py \
+    --url="https://archive.ics.uci.edu/static/public/863/maternal+health+risk.zip" \
+    --write-to=data/raw
+
+python scripts/validate_data.py \
+    --raw-data="data/raw/Maternal Health Risk Data Set.csv" \
+    --data-to=data/processed \
+    --log-to=results/logs
+
+python scripts/split_preprocess_data.py \
+    --validated-data=data/processed/validated_data.csv \
+    --data-to=data/processed \
+    --preprocessor-to=results/models
+
 python scripts/fit_maternal_health_risk_classifier.py \
     --training-data=data/processed/maternal_health_risk_train.csv \
     --pipeline-to=results/models \
