@@ -54,7 +54,7 @@ div.csl-indent {
 <link href="health_analysis_files/libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="health_analysis_files/libs/bootstrap/bootstrap.min.js"></script>
 <link href="health_analysis_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="health_analysis_files/libs/bootstrap/bootstrap-0f0977fad6f16c410dfaccae741b1d99.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="health_analysis_files/libs/bootstrap/bootstrap-1e118674f8eeaf0dc11d6faf9a2d8791.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
 
 <script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
@@ -217,7 +217,7 @@ div.csl-indent {
 Table&nbsp;1: Raw Maternal Health Risk Data
 </figcaption>
 <div aria-describedby="tbl-raw-data-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="cell-output cell-output-display" data-execution_count="126">
+<div class="cell-output cell-output-display" data-execution_count="44">
 <div>
 
 
@@ -362,7 +362,7 @@ Table&nbsp;1: Raw Maternal Health Risk Data
 Table&nbsp;2: Training Data Split
 </figcaption>
 <div aria-describedby="tbl-train-data-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="cell-output cell-output-display" data-execution_count="128">
+<div class="cell-output cell-output-display" data-execution_count="46">
 <div>
 
 
@@ -507,7 +507,7 @@ Table&nbsp;2: Training Data Split
 Table&nbsp;3: Testing Data Split
 </figcaption>
 <div aria-describedby="tbl-test-data-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="cell-output cell-output-display" data-execution_count="129">
+<div class="cell-output cell-output-display" data-execution_count="47">
 <div>
 
 
@@ -652,7 +652,7 @@ Table&nbsp;3: Testing Data Split
 Table&nbsp;4: Risk Level Counts in Training Data
 </figcaption>
 <div aria-describedby="tbl-risk-counts-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="cell-output cell-output-display" data-execution_count="130">
+<div class="cell-output cell-output-display" data-execution_count="48">
 <pre><code>RiskLevel
 low risk     286
 mid risk     238
@@ -755,7 +755,7 @@ Figure&nbsp;1: Comparison of the distributions of features contributing to the r
 <p>For <code>HeartRate</code>, we chose a validation range of 50-150 bpm. A resting heart rate below 50 bpm or above 150 bpm suggests potential cardiovascular problems requiring immediate medical intervention. Neither of the extreme values is compatible with normal maternal health assessment, and such values can be considered outliers.</p>
 <p>The target variable <code>RiskLevel</code> is a categorical variable representing the maternal health risk classification based on clinical assessment. Each observation must contain exactly one of these three risk levels: <code>low risk</code>, <code>mid risk</code> and <code>high risk</code>.</p>
 <p>To ensure that the target variable is not severely imbalanced, we applied a minimum class frequency check (at least 5% per class). This avoids situations where certain risk levels are too rare for the model to learn meaningful patterns, which could lead to biased predictions.</p>
-<div id="0fea683a" class="cell" data-execution_count="12">
+<div id="82711a38" class="cell" data-execution_count="12">
 <div class="cell-output cell-output-stdout">
 <pre><code>Data shape before validation:
 (1014, 7)
@@ -780,7 +780,7 @@ Data shape after validation:
 Table&nbsp;5: Descriptive Statistics of Health Data
 </figcaption>
 <div aria-describedby="tbl-data-summary-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="cell-output cell-output-display" data-execution_count="136">
+<div class="cell-output cell-output-display" data-execution_count="54">
 <div>
 
 
@@ -878,7 +878,7 @@ Table&nbsp;5: Descriptive Statistics of Health Data
 </figure>
 </div>
 </div>
-<div id="3cf9b516" class="cell" data-execution_count="14">
+<div id="b59c54aa" class="cell" data-execution_count="14">
 <div class="cell-output cell-output-stdout">
 <pre><code>&lt;class 'pandas.core.frame.DataFrame'&gt;
 RangeIndex: 1014 entries, 0 to 1013
@@ -936,7 +936,7 @@ memory usage: 55.6+ KB</code></pre>
 Table&nbsp;6: Dummy Classifier Cross-Validation Scores
 </figcaption>
 <div aria-describedby="tbl-dummy-score-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="cell-output cell-output-display" data-execution_count="147">
+<div class="cell-output cell-output-display" data-execution_count="65">
 <div>
 
 
@@ -953,36 +953,36 @@ Table&nbsp;6: Dummy Classifier Cross-Validation Scores
 <tbody>
 <tr class="odd">
 <th data-quarto-table-cell-role="th">0</th>
-<td>0.000662</td>
-<td>0.000377</td>
+<td>0.000308</td>
+<td>0.000245</td>
 <td>0.401408</td>
 <td>0.403880</td>
 </tr>
 <tr class="even">
 <th data-quarto-table-cell-role="th">1</th>
-<td>0.000377</td>
-<td>0.000287</td>
+<td>0.000232</td>
+<td>0.000214</td>
 <td>0.401408</td>
 <td>0.403880</td>
 </tr>
 <tr class="odd">
 <th data-quarto-table-cell-role="th">2</th>
-<td>0.000349</td>
-<td>0.000265</td>
+<td>0.000213</td>
+<td>0.000186</td>
 <td>0.401408</td>
 <td>0.403880</td>
 </tr>
 <tr class="even">
 <th data-quarto-table-cell-role="th">3</th>
-<td>0.000344</td>
-<td>0.000262</td>
+<td>0.000208</td>
+<td>0.000180</td>
 <td>0.408451</td>
 <td>0.402116</td>
 </tr>
 <tr class="odd">
 <th data-quarto-table-cell-role="th">4</th>
-<td>0.000340</td>
-<td>0.000273</td>
+<td>0.000208</td>
+<td>0.000226</td>
 <td>0.404255</td>
 <td>0.403169</td>
 </tr>
@@ -1002,7 +1002,7 @@ Table&nbsp;6: Dummy Classifier Cross-Validation Scores
 Table&nbsp;7: SVC Cross-Validation Scores (Default)
 </figcaption>
 <div aria-describedby="tbl-svc-score-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="cell-output cell-output-display" data-execution_count="150">
+<div class="cell-output cell-output-display" data-execution_count="68">
 <div>
 
 
@@ -1019,36 +1019,36 @@ Table&nbsp;7: SVC Cross-Validation Scores (Default)
 <tbody>
 <tr class="odd">
 <th data-quarto-table-cell-role="th">0</th>
-<td>0.008401</td>
-<td>0.002894</td>
+<td>0.006434</td>
+<td>0.002837</td>
 <td>0.725352</td>
 <td>0.707231</td>
 </tr>
 <tr class="even">
 <th data-quarto-table-cell-role="th">1</th>
-<td>0.007727</td>
-<td>0.002908</td>
+<td>0.005307</td>
+<td>0.002634</td>
 <td>0.676056</td>
 <td>0.719577</td>
 </tr>
 <tr class="odd">
 <th data-quarto-table-cell-role="th">2</th>
-<td>0.007946</td>
-<td>0.003012</td>
+<td>0.005597</td>
+<td>0.002684</td>
 <td>0.718310</td>
 <td>0.719577</td>
 </tr>
 <tr class="even">
 <th data-quarto-table-cell-role="th">3</th>
-<td>0.008378</td>
-<td>0.003288</td>
+<td>0.005915</td>
+<td>0.002975</td>
 <td>0.711268</td>
 <td>0.708995</td>
 </tr>
 <tr class="odd">
 <th data-quarto-table-cell-role="th">4</th>
-<td>0.007510</td>
-<td>0.002728</td>
+<td>0.005409</td>
+<td>0.002526</td>
 <td>0.659574</td>
 <td>0.727113</td>
 </tr>
@@ -1071,7 +1071,7 @@ Table&nbsp;7: SVC Cross-Validation Scores (Default)
 Table&nbsp;8: SVC Cross-Validation Scores (Recall Weighted)
 </figcaption>
 <div aria-describedby="tbl-svc-recall-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="cell-output cell-output-display" data-execution_count="152">
+<div class="cell-output cell-output-display" data-execution_count="70">
 <div>
 
 
@@ -1088,36 +1088,36 @@ Table&nbsp;8: SVC Cross-Validation Scores (Recall Weighted)
 <tbody>
 <tr class="odd">
 <th data-quarto-table-cell-role="th">0</th>
-<td>0.008694</td>
-<td>0.004789</td>
+<td>0.006140</td>
+<td>0.003496</td>
 <td>0.725352</td>
 <td>0.707231</td>
 </tr>
 <tr class="even">
 <th data-quarto-table-cell-role="th">1</th>
-<td>0.007985</td>
-<td>0.003828</td>
+<td>0.005413</td>
+<td>0.003225</td>
 <td>0.676056</td>
 <td>0.719577</td>
 </tr>
 <tr class="odd">
 <th data-quarto-table-cell-role="th">2</th>
-<td>0.008243</td>
-<td>0.003826</td>
+<td>0.005662</td>
+<td>0.003114</td>
 <td>0.718310</td>
 <td>0.719577</td>
 </tr>
 <tr class="even">
 <th data-quarto-table-cell-role="th">3</th>
-<td>0.007971</td>
-<td>0.003672</td>
+<td>0.005311</td>
+<td>0.003071</td>
 <td>0.711268</td>
 <td>0.708995</td>
 </tr>
 <tr class="odd">
 <th data-quarto-table-cell-role="th">4</th>
-<td>0.007587</td>
-<td>0.004313</td>
+<td>0.005131</td>
+<td>0.003414</td>
 <td>0.659574</td>
 <td>0.727113</td>
 </tr>
@@ -1130,9 +1130,9 @@ Table&nbsp;8: SVC Cross-Validation Scores (Recall Weighted)
 </figure>
 </div>
 </div>
-<div id="61593f5d" class="cell" data-execution_count="32">
-<div class="cell-output cell-output-display" data-execution_count="155">
-<pre><code>0.7615895372233401</code></pre>
+<div id="93990281" class="cell" data-execution_count="32">
+<div class="cell-output cell-output-display" data-execution_count="73">
+<pre><code>0.7629979879275655</code></pre>
 </div>
 </div>
 <div id="cell-fig-hyperparam-heatmap" class="cell" data-execution_count="34">
@@ -1156,7 +1156,7 @@ Figure&nbsp;2: Results from hyperparameter optimization and 10-fold cross valida
 Table&nbsp;9: Crosstab of Actual vs Predicted Risk Levels
 </figcaption>
 <div aria-describedby="tbl-crosstab-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="cell-output cell-output-display" data-execution_count="162">
+<div class="cell-output cell-output-display" data-execution_count="80">
 <div>
 
 
@@ -1219,9 +1219,9 @@ Figure&nbsp;3: Confusion matrix of model performance on test data.
 </div>
 <div id="cell-fig-roc-curve" class="cell" data-execution_count="41">
 <div class="cell-output cell-output-stdout">
-<pre><code>high risk: AUC = 0.953
-low risk: AUC = 0.884
-mid risk: AUC = 0.858</code></pre>
+<pre><code>high risk: AUC = 0.952
+low risk: AUC = 0.885
+mid risk: AUC = 0.854</code></pre>
 </div>
 <div class="cell-output cell-output-display">
 <div id="fig-roc-curve" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -1247,6 +1247,7 @@ Figure&nbsp;4: ROC curve of model performance on test data.
 <h1>Discussion</h1>
 <p>The latest interation of the SVC model delivered promising results and demonstrated considerable accuracy when classifying high-risk individuals. Correct identification of high-risk individuals is pivotal in the prevention and early intervention of pregnancy complications, such as hemorrhaging and eclampsia. The model’s ability to correctly classify high-risk inviduals is encouraging, and future interations could help alert doctors or emergency responders to improve accessibility for underserved communities.</p>
 <p>Further refinement is required, however, as the model made 13 notable classification errors during testing. 13 truely high-risk cases were misclassified as 11 medium-risk and 2 low-risk. In reality, these false negatives are gaps where high-risk individuals could be overlooked and not prioritized appropriately. Future versions should seek to improve the model’s sensitivity to high-risk cases and better differentiate between medium and low-risk categories before it is ready to be implemented in clinical settings.</p>
+<p>A limitation of this model is that other devices and their sensors may have different measurement accuracies and calibration standards. The model was trained on data collected from specific IoT devices in rural Bangladesh; therefore, its performance may vary when applied to data from different devices or populations. Additionally, other countries may have health information documentation standards that differ from Bangladesh. Future work should consider validating the model across diverse datasets and device types to ensure its robustness and generalizability.</p>
 </section>
 <section id="conclusion" class="level1">
 <h1>Conclusion</h1>
