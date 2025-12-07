@@ -7,6 +7,9 @@ import os
 import click
 import altair as alt
 import pandas as pd
+from deepchecks.tabular import Dataset
+from deepchecks.tabular.checks import FeatureLabelCorrelation, FeatureFeatureCorrelation
+
 
 
 FEATURE_COLS = ["Age", "SystolicBP", "DiastolicBP", "BS", "BodyTemp", "HeartRate"]
@@ -29,14 +32,41 @@ def main(processed_training_data, plot_to):
     """
     Create EDA plots for the maternal health training data:
 
-    1. Correlation heatmap between numeric features.
-    2. Density plots of each feature, faceted by feature and colored by RiskLevel.
+    1. Feature-Feature correlation and Target-Feature correlation.
+    2. Correlation heatmap between numeric features.
+    3. Density plots of each feature, faceted by feature and colored by RiskLevel.
 
     All plots are saved to the directory given by --plot-to.
     """
 
     train_df = pd.read_csv(processed_training_data)
 
+    # Data validation - correlation checks
+
+    mh_train_ds = Dataset(
+        data=train_df.drop(columns=["RiskLevel"]),
+        label="RiskLevel",
+        cat_features=[]
+    )
+
+    # feature-label correlation check
+    check_feat_lab_corr = FeatureLabelCorrelation().add_condition_feature_pps_less_than(0.9)
+    feat_lab_result = check_feat_lab_corr.run(dataset=mh_train_ds)
+    feat_lab_result.save_as_html(
+        os.path.join(plot_to, "feature_label_correlation.html")
+    )
+
+    # feature-feature correlation check
+    check_feat_feat_corr = FeatureFeatureCorrelation().add_condition_max_number_of_pairs_above_threshold(
+        threshold=0.92,
+        n_pairs=0
+    )
+    feat_feat_result = check_feat_feat_corr.run(dataset=mh_train_ds)
+    feat_feat_result.save_as_html(
+        os.path.join(plot_to, "feature_feature_correlation.html")
+    )
+
+    
     corr_matrix = train_df[FEATURE_COLS].corr()
     corr_long = corr_matrix.reset_index().melt(id_vars="index")
     corr_long.columns = ["Feature 1", "Feature 2", "Correlation"]
