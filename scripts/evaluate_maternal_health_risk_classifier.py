@@ -1,7 +1,10 @@
-# src/evaluate_maternal_health_classifier.py
+# evaluate_maternal_health_risk_classifier.py
 # author: Gloria Yi
 # date: 2025-11-28
 # code reference: adapted from https://github.com/ttimbers/breast-cancer-predictor/blob/2.0.0/scripts/evaluate_breast_cancer_predictor.py
+
+import warnings
+warnings.filterwarnings("ignore")
 
 import os
 import click
@@ -50,7 +53,48 @@ from sklearn.metrics import ConfusionMatrixDisplay
     help="Random seed.",
 )
 def main(processed_test_data, columns_to_drop, pipeline_from, results_to, seed):
-    """Evaluate the maternal health risk classifier on the test data and save metrics."""
+    """
+    Evaluate the maternal health risk classification model on the processed
+    test dataset and save evaluation metrics, confusion matrix, and ROC curves.
+    This script loads a fitted pipeline, optionally removes specified features,
+    computes multiple performance metrics, and generates diagnostic plots.
+
+    Parameters
+    ----------
+    processed_test_data : str
+        Path to the processed maternal health test data CSV file.
+        The dataset must contain the target column ``RiskLevel``.
+
+    columns_to_drop : str or None
+        Optional path to a CSV file that lists columns to drop from the test
+        dataset. This CSV must contain a column named ``feats_to_drop``.
+        If ``None`` (default), no columns are dropped.
+
+    pipeline_from : str
+        Path to a pickle file containing the fitted scikit-learn pipeline
+        used for prediction. The pipeline must implement either
+        ``decision_function`` or ``predict_proba`` for ROC computation.
+
+    results_to : str
+        Directory where all evaluation results will be saved. The function
+        creates the directory if it does not already exist.
+
+        Saved outputs include:
+            - ``test_scores.csv``: accuracy, weighted recall, and weighted F2.
+            - ``confusion_matrix.csv``: crosstab of true vs predicted labels.
+            - ``confusion_matrix.png``: visual confusion matrix plot.
+            - ``roc_curves.png``: One-vs-Rest ROC curve plot.
+            - ``auc_scores.csv``: AUC values per class.
+
+    seed : int, optional
+        Random seed used for reproducibility (default: 522).
+
+    Returns
+    -------
+    None
+        The function is executed for its side effects: writing evaluation files
+        and generating plots in the directory specified by ``results_to``.
+    """
     np.random.seed(seed)
     set_config(transform_output="pandas")
     os.makedirs(results_to, exist_ok=True)

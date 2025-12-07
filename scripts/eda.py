@@ -3,6 +3,9 @@
 # date: 2025-12-05
 # code reference: https://github.com/ttimbers/breast-cancer-predictor/blob/2.0.0/scripts/eda.py
 
+import warnings
+warnings.filterwarnings("ignore")
+
 import os
 import click
 import altair as alt
@@ -38,13 +41,50 @@ FEATURE_COLS = ["Age", "SystolicBP", "DiastolicBP", "BS", "BodyTemp", "HeartRate
 )
 def main(processed_training_data, plot_to, tables_to):
     """
-    Create EDA plots for the maternal health training data:
+    Generate exploratory data analysis (EDA) outputs for the maternal health
+    training dataset. The function reads the processed training CSV, computes
+    summary statistics, creates diagnostic tables, and produces several plots
+    describing correlations and feature distributions. It also performs 
+    data-validation checks using deepchecks.
 
-    1. Feature-Feature correlation and Target-Feature correlation.
-    2. Correlation heatmap between numeric features.
-    3. Density plots of each feature, faceted by feature and colored by RiskLevel.
+    Parameters
+    ----------
+    processed_training_data : str
+        Path to the processed maternal health training data (CSV file).
+        The dataset should contain the numeric feature columns specified in 
+        `FEATURE_COLS` and the target column, ``RiskLevel``.
 
-    All plots are saved to the directory given by --plot-to.
+    plot_to : str
+        Directory where all EDA plot files will be saved. The function creates
+        the directory if it does not exist. Plots include:
+        
+        - ``correlation_heatmap.png``: Pearson correlation heatmap among numeric features.
+        - ``feature_densities_by_risklevel.png``: KDE distributions of features by risk level.
+
+    tables_to : str
+        Directory where summary tables will be saved. The function creates it 
+        if it does not exist. Tables include:
+        
+        - ``train_describe.csv``: Statistical summary using ``DataFrame.describe``.
+        - ``train_info.txt``: Output of ``DataFrame.info`` including data types and non-null counts.
+
+    Returns
+    -------
+    None
+        This function is executed for its side effects: producing files
+        (EDA tables, figures) and raising errors if deepchecks correlation 
+        validations fail.
+
+    Raises
+    ------
+    ValueError
+        If the feature–label correlation exceeds the acceptable threshold 
+        defined in ``FeatureLabelCorrelation`` checks.
+    
+    ValueError
+        If the feature–feature correlation violates the maximum allowed
+        number of correlated feature pairs as defined in 
+        ``FeatureFeatureCorrelation`` checks.
     """
     os.makedirs(plot_to, exist_ok=True)
     os.makedirs(tables_to, exist_ok=True)
