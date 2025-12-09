@@ -10,9 +10,7 @@ RUN conda run -n dockerlock pip install deepchecks==0.19.1
 USER root
 
 # install lmodern to render Quarto PDF
-RUN sudo apt update && sudo apt install -y lmodern
-
-USER $NB_UID
+RUN apt update && apt install -y lmodern
 
 # expose JupyterLab port
 EXPOSE 8888
