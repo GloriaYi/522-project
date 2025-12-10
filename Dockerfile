@@ -8,7 +8,7 @@ RUN conda install -n base -c conda-forge conda-lock -y \
   && conda-lock install -n dockerlock conda-lock.yml \
   && conda run -n dockerlock pip install deepchecks==0.19.1 \
   && conda run -n dockerlock quarto install tinytex --no-prompt
-
+  
 # expose JupyterLab port
 EXPOSE 8888
 
