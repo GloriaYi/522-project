@@ -58,7 +58,7 @@ def main(training_data, preprocessor, pipeline_to, plot_to, seed):
     np.random.seed(seed)
     train_df = pd.read_csv(training_data)
     preprocessor = pickle.load(open(preprocessor, 'rb'))
-    svc = make_pipeline(preprocessor, SVC())
+    svc = make_pipeline(preprocessor, SVC(random_state=seed))
     param_grid = {
     "svc__C": loguniform(1e-2, 1e3),
     "svc__gamma": loguniform(1e-4, 1e1)
