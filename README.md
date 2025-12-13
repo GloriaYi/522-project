@@ -79,7 +79,14 @@ make remove
 
 6. Update the `docker-compose.yml` file on your branch to use the new container image (make sure to update the tag specifically).
 
-5. Send a pull request to merge the changes into the `main` branch. 
+5. Send a pull request to merge the changes into the `main` branch.
+
+### Running the test suite
+
+Use the same `docker compose up` command as described above to launch Jupyter lab.
+Tests are run using the `pytest` command in the root of the project.
+More details about the test suite can be found in the 
+[`tests`](tests) directory.
 
 ## License
 
