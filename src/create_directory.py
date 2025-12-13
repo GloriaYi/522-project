@@ -19,4 +19,4 @@ def create_directory(directory_path):
     --------
     >>> create_directory("data/raw")
     """
-    os.makedirs(directory_path, exists_ok=True)
+    os.makedirs(directory_path, exist_ok=True)
