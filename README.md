@@ -63,7 +63,9 @@ make remove
 
 ### Developer dependencies
 
-- [Docker](https://www.docker.com/) 
+- [Docker](https://www.docker.com/)
+- conda (version 23.9.0 or higher)
+- conda-lock (version 2.5.7 or higher)
 
 ### Adding a new dependency
 
