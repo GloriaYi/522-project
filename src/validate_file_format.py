@@ -1,5 +1,5 @@
 # validate_file_format.py
-# Checks of the file has the expected file extension.
+# Checks if the file has the expected file extension.
 
 def validate_file_format(file_path, expected_file_extension):
     """
