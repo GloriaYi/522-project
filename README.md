@@ -20,6 +20,9 @@ The data set used in this project consists of health conditions of pregnant indi
 
 The report can be found [here](https://github.com/GloriaYi/Maternal-Health-Risk-Classifier/blob/main/reports/health_analysis.pdf).
 
+## Dependencies
+- [Docker](https://www.docker.com/) 
+
 ## Usage
 
 ### Setup
@@ -65,9 +68,8 @@ make remove
 
 ### Developer dependencies
 
-- [Docker](https://www.docker.com/)
-- conda (version 23.9.0 or higher)
-- conda-lock (version 2.5.7 or higher)
+- `conda` (version 23.9.0 or higher)
+- `conda-lock` (version 2.5.7 or higher)
 
 ### Adding a new dependency
 
