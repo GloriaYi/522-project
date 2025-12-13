@@ -28,7 +28,7 @@ train_df = pd.read_csv("../data/processed/maternal_health_risk_train.csv", index
 test_df = pd.read_csv("../data/processed/maternal_health_risk_test.csv", index_col=0)
 train_describe = pd.read_csv("../results/tables/train_describe.csv", index_col=0)
 test_scores = pd.read_csv("../results/tables/test_scores.csv")
-auc_scores = pd.read_csv("../results/tables/auc_scores.csv", index_col=0)
+auc_scores = pd.read_csv("../results/tables/auc_scores.csv")
 confusion = pd.read_csv("../results/tables/confusion_matrix.csv", index_col=0)
 
 # Compute validation metrics
@@ -40,9 +40,9 @@ recall_weighted = round(test_scores["recall_weighted"].iloc[0], 4)
 accuracy = round(test_scores["accuracy"].iloc[0], 4)
 
 # AUC scores
-auc_high = round(auc_scores.loc["AUC", "high risk"], 4)
-auc_low = round(auc_scores.loc["AUC", "low risk"], 4)
-auc_mid = round(auc_scores.loc["AUC", "mid risk"], 4)
+auc_high = round(auc_scores["high risk"].iloc[0], 4)
+auc_low = round(auc_scores["low risk"].iloc[0], 4)
+auc_mid = round(auc_scores["mid risk"].iloc[0], 4)
 
 # Confusion matrix analysis
 high_risk_correct = confusion.loc["high risk", "high risk"]
@@ -171,7 +171,7 @@ We first applied the `FeatureLabelCorrelation` check from Deepchecks (used Pande
 
 #### Feature-Feature Correlation
 
-We also used Deepchecks' `FeatureFeatureCorrelation` to check for unusually high correlations between pairs of features, which may indicate redundancy or multicolinearity in modeling. Threshold used: correlation < 0.95. Feature–feature correlations met the threshold. No pairs of features exhibited extremely high correlation that would require removal or special handling.
+We also used Deepchecks' `FeatureFeatureCorrelation` to check for unusually high correlations between pairs of features, which may indicate redundancy or multicollinearity in modeling. Multicollinearity is important to consider as it can introduce uncertainty in the model's coefficients and predictions. Threshold used: correlation < 0.95. Feature–feature correlations met the threshold. No pairs of features exhibited extremely high correlation that would require removal or special handling.
 
 ![Feature Correlation Heatmap](../results/figures/correlation_heatmap.png){#fig-corr-heatmap fig-cap="Heatmap showing correlations between features in the training dataset."}
 
@@ -195,8 +195,9 @@ In order to classify clinical risk levels, recall score was selected as the pref
 
 ![Hyperparameter Optimization](../results/figures/svc_hyperparameter_tuning.png){#fig-hyperparam-heatmap fig-cap="Results from hyperparameter optimization and 10-fold cross validation. Recall score was used as the classification metric."}
 
+A confusion matrix and ROC curve were generated to visualize the model's performance on the test dataset. The model performed well overall and was particularly strong in identifying high-risk pregnancies.
 
-![Crosstab of Actual vs Predicted Risk Levels](../results/figures/confusion_matrix.png){#fig-confusion-matrix fig-cap="Confusion matrix of model performance on test data."}
+![Crosstab of Actual vs Predicted Risk Levels](../results/figures/confusion_matrix.png){#fig-confusion-matrix fig-cap="Confusion matrix of model performance on test data." size="60%"}
 
 ![Classifier ROC Curves](../results/figures/roc_curves.png){#fig-roc-curve fig-cap="ROC curve of model performance on test data."}
 
@@ -210,7 +211,7 @@ The latest iteration of the SVC model delivered promising results and demonstrat
 
 Further refinement is required, however, as the model made `{python} total_high_errors` notable classification errors during testing. These truly high-risk cases were misclassified as `{python} high_risk_as_mid` medium-risk and `{python} high_risk_as_low` low-risk. In reality, these false negatives are gaps where high-risk individuals could be overlooked and not prioritized appropriately. Future versions should seek to improve the model's sensitivity to high-risk cases and better differentiate between medium and low-risk categories before it is ready to be implemented in clinical settings.
 
-A limitation of this model is that other devices and their sensors may have different measurement accuracies and calibration standards. The model was trained on data collected from specific IoT devices in rural Bangladesh; therefore, its performance may vary when applied to data from different devices or populations. Additionally, other countries may have health information documentation standards that differ from Bangladesh. Future work should consider validating the model across diverse datasets and device types to ensure its robustness and generalizability.
+A limitation of this model is that other devices and their sensors may have different measurement accuracies and calibration standards. The model was trained on data collected from specific IoT devices in rural Bangladesh; therefore, its performance may vary when applied to data from different devices or populations. Additionally, other countries may have health information documentation standards that differ from Bangladesh. Future work should consider validating the model across diverse datasets and device types to ensure its robustness and generalizability. The data validation performed for this set was based on reasonable clinical ranges, but the ranges and feature correlations may need to be reassessed for different environments.
 
 # Conclusion
 
