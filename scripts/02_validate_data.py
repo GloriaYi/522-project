@@ -10,23 +10,7 @@ import logging
 import json
 import os
 from src.validate_file_format import validate_file_format
-
-def validate_column_names(data, expected_columns):
-    """
-    Function to check if the DataFrame has the correct column names,
-    given the DataFrame and the expected column names.
-    """
-    actual_columns = data.columns.tolist()
-    
-    missing_columns = set(expected_columns) - set(actual_columns)
-    if missing_columns:
-        error_msg = "Missing required columns."
-        raise ValueError(error_msg)
-
-    extra_columns = set(actual_columns) - set(expected_columns)
-    if extra_columns:
-        error_msg = "Unexpected extra columns found."
-        raise ValueError(error_msg)
+from src.validate_column_names import validate_column_names
 
 @click.command()
 @click.option('--raw-data', type=str, help="Path to raw data CSV file")
