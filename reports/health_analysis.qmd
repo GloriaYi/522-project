@@ -10,9 +10,7 @@ format:
         toc: true
         toc-depth: 2
 bibliography: references.bib
-output-file: health_analysis
 execute:
-    eval: false
     echo: false
     warning: false
 editor: source
@@ -20,35 +18,48 @@ editor: source
 
 ```{python}
 #| output: false
-#| eval: true
-import numpy as np
+
 import pandas as pd
-import requests
-import zipfile
-import json
-import logging
-import pandera.pandas as pa
-import altair as alt
-import matplotlib.pyplot as plt
-import seaborn as sns
-from pandera import Column, Check
-from deepchecks.tabular import Dataset
-from sklearn.model_selection import train_test_split
-from sklearn.compose import make_column_transformer
-from sklearn.preprocessing import StandardScaler, label_binarize
-from sklearn.dummy import DummyClassifier
-from sklearn.linear_model import LogisticRegression
-from sklearn.svm import SVC
-from sklearn.model_selection import cross_validate
-from sklearn.pipeline import make_pipeline
-from scipy.stats import loguniform
-from sklearn.model_selection import RandomizedSearchCV, cross_val_predict
-from sklearn.metrics import fbeta_score, make_scorer, recall_score, ConfusionMatrixDisplay, confusion_matrix, RocCurveDisplay, roc_auc_score
+
+# Load all data files once
+raw_data = pd.read_csv("../data/raw/Maternal Health Risk Data Set.csv")
+train_df = pd.read_csv("../data/processed/maternal_health_risk_train.csv", index_col=0)
+test_df = pd.read_csv("../data/processed/maternal_health_risk_test.csv", index_col=0)
+train_describe = pd.read_csv("../results/tables/train_describe.csv", index_col=0)
+test_scores = pd.read_csv("../results/tables/test_scores.csv")
+auc_scores = pd.read_csv("../results/tables/auc_scores.csv", index_col=0)
+confusion = pd.read_csv("../results/tables/confusion_matrix.csv", index_col=0)
+
+# Compute validation metrics
+n_duplicates = raw_data.duplicated().sum()
+n_obs = int(train_describe["count"].iloc[0])
+
+# Extract performance metrics
+recall_weighted = round(test_scores["recall_weighted"].iloc[0], 4)
+accuracy = round(test_scores["accuracy"].iloc[0], 4)
+
+# AUC scores
+auc_high = round(auc_scores.loc["AUC", "high risk"], 4)
+auc_low = round(auc_scores.loc["AUC", "low risk"], 4)
+auc_mid = round(auc_scores.loc["AUC", "mid risk"], 4)
+
+# Confusion matrix analysis
+high_risk_correct = confusion.loc["high risk", "high risk"]
+high_risk_as_low = confusion.loc["high risk", "low risk"]
+high_risk_as_mid = confusion.loc["high risk", "mid risk"]
+high_risk_total = high_risk_correct + high_risk_as_low + high_risk_as_mid
+high_risk_recall = round(high_risk_correct / high_risk_total, 3)
+
+# Total test cases and correct predictions
+total_test = confusion.sum().sum()
+total_correct = confusion.iloc[0, 0] + confusion.iloc[1, 1] + confusion.iloc[2, 2]
+total_high_errors = high_risk_as_low + high_risk_as_mid
+
 ```
 
 # Abstract
 
-Despite advancements in medicine and technology, maternal mortality remains a prevalent issue impacting many women in developing countries. The general consensus is that maternal mortality is a multidimensional issue that is complicated by many socioeconomic determinants of health and barriers to access. This project aims to investigate the viability of using a Support Vector Classifier (SVC) trained on open-source maternal health measurements to predict the risk intensity levels (low, medium, or high) of pregnant women. Our final classifier performed fairly well on an unseen test data set, with a weighted recall score of 0.77 and an overall accuracy of 0.77. Out of the 305 test data cases, it correctly predicted 235 cases. The model showed particularly strong performance in identifying high-risk pregnancies, achieving an AUV of 0.943 for the high-risk class, compared to 0.820 for low-risk class and 0.814 for medium-risk class. However, the model made notable errors where 13 high-risk cases were misclassified as 11 medium-risk and 2 low-risk. These false negatives are gaps where high-risk individuals may not receive the necessary care. We recommend further research to improve the model's sensitivity to high-risk cases and better differentiate between medium and low-risk categories before it is ready to be put into production in clinical settings. Additional feature engineering or exploring ensemble methods may help reduce these critical misclassifications. The implementation of refined classifiers would expand the capabilities of most healthcare systems and increase the efficacy of monitoring and interventions in underprivileged communities.
+Despite advancements in medicine and technology, maternal mortality remains a prevalent issue impacting many women in developing countries. The general consensus is that maternal mortality is a multidimensional issue that is complicated by many socioeconomic determinants of health and barriers to access. This project aims to investigate the viability of using a Support Vector Classifier (SVC) trained on open-source maternal health measurements to predict the risk intensity levels (low, medium, or high) of pregnant women. Our final classifier performed fairly well on an unseen test data set, with a weighted recall score of `{python} recall_weighted` and an overall accuracy of `{python} accuracy`. Out of the `{python} total_test` test data cases, it correctly predicted `{python} total_correct` cases. The model showed particularly strong performance in identifying high-risk pregnancies, achieving an AUC of `{python} auc_high` for the high-risk class, compared to `{python} auc_low` for low-risk class and `{python} auc_mid` for medium-risk class. However, the model made notable errors where `{python} total_high_errors` high-risk cases were misclassified as `{python} high_risk_as_mid` medium-risk and `{python} high_risk_as_low` low-risk. These false negatives are gaps where high-risk individuals may not receive the necessary care. We recommend further research to improve the model's sensitivity to high-risk cases and better differentiate between medium and low-risk categories before it is ready to be put into production in clinical settings. Additional feature engineering or exploring ensemble methods may help reduce these critical misclassifications. The implementation of refined classifiers would expand the capabilities of most healthcare systems and increase the efficacy of monitoring and interventions in underprivileged communities.
 
 # Introduction
 
@@ -58,9 +69,9 @@ One such country is Bangladesh, which has an overall maternal mortality ratio of
 
 > "women living in rural areas and those of poorer socioeconomic status were more likely to die due to maternal causes of deaths. Most deaths occurred on the day of and one day after delivery. We identified haemorrhage and eclampsia as the major contributors to maternal deaths. We also found a large proportion of deaths occurring in-transit with substantial shuttling for care seeking before their deaths. [@hossain2023maternal]"
     
-In their conclusions, @hossain2023maternal recommended investing in a structured referral system and emergency transportation to prioritize delivering timely interventions for haemorrhaging or eclampsia. This sentiment is echoed in a paper published in *The Lancet* that performed a global analysis of the determinants in marternal health and mortality [@souza2023global]. @souza2023global argues that focusing research on the biomedical causes of mortality is insufficient, and more attention should be directed towards goals such as "primary prevention, early identification, and adequate management of pregnancy, labour, and postpartum complications". 
+In their conclusions, @hossain2023maternal recommended investing in a structured referral system and emergency transportation to prioritize delivering timely interventions for haemorrhaging or eclampsia. This sentiment is echoed in a paper published in *The Lancet* that performed a global analysis of the determinants in maternal health and mortality [@souza2023global]. @souza2023global argues that focusing research on the biomedical causes of mortality is insufficient, and more attention should be directed towards goals such as "primary prevention, early identification, and adequate management of pregnancy, labour, and postpartum complications". 
 
-Both reports highlight a growing need for the ability to identify and prioritize high-risk mothers in order to accurately and punctually deliver care. A welcome innovation has been the development of wearable technology and internet-enabled devices. These devices have allowed patients and physicians to reliably monitor health conditions from their homes and enabled the collection of physiological data from otherwise underserved communities. In 2020, @ahmed2020data used these devices as well as available medical records to build maternal health dataset of rural Bangladesh, which was later uploaded to the UC Irvine Machine Learning Repository. This project seeks to predict maternal health risk levels using an SVC model and the Maternal Health Risk dataset. The ability to accurately predict high-risk pregnancies would allow timely and focused medical interventions for vulnerable individuals.
+Both reports highlight a growing need for the ability to identify and prioritize high-risk mothers in order to accurately and punctually deliver care. A welcome innovation has been the development of wearable technology and internet-enabled devices. These devices have allowed patients and physicians to reliably monitor health conditions from their homes and enabled the collection of physiological data from otherwise underserved communities. In 2020, @ahmed2020data used these devices as well as available medical records to build a maternal health dataset of rural Bangladesh, which was later uploaded to the UC Irvine Machine Learning Repository. This project seeks to predict maternal health risk levels using an SVC model and the Maternal Health Risk dataset. The ability to accurately predict high-risk pregnancies would allow timely and focused medical interventions for vulnerable individuals.
 
 # Methods
 
@@ -79,49 +90,28 @@ The data set used in this project is of health conditions of pregnant women from
 | RiskLevel   | Target  | Categorical | Predicted pregnancy risk level based on clinical features |
 
 ## Analysis
-SVC was used to build a classification model to predict risk levels for pregnant women in rural Bangladesh. With the exception of diastolic blood pressure, all variables from the original dataset were included for analysis. The features used were age, systolic blood pressure, blood glucose level (BS), body temperature, and heart rate. Data was partitioned into a 70:30 train-test split and the random_state was set to 123 for reproducibility. We performed hyperparameter tuning using randomized search with 10-fold cross-validation and recall score (weighted) as our evaluation metric to select the optimal values for C (regularization parameter), gamma (kernel coefficient). Recall score was selected to optimize the model for sensitivity in predicting high-risk cases. All explanatory variables were numerical and were standardized via StandardScalar prior to fitting. The Python programming language and the following Python packages were used to perform the analysis: requests [@reitz2023requests], numpy [@harris2020array], Pandas [@mckinney2010data], pandera [@niels_bantilan_2023_pandera], altair [@vanderplas2018altair], matplotlib [@hunter2007matplotlib], seaborn [@waskom2021seaborn], deepchecks [@deepchecks], scikit-learn [@pedregosa2011scikit], and scipy [@virtanen2020scipy].
+SVC was used to build a classification model to predict risk levels for pregnant women in rural Bangladesh. With the exception of diastolic blood pressure, all variables from the original dataset were included for analysis. The features used were age, systolic blood pressure, blood glucose level (BS), body temperature, and heart rate. Data was partitioned into a 70:30 train-test split and the random_state was set to 123 for reproducibility. We performed hyperparameter tuning using randomized search with 10-fold cross-validation and recall score (weighted) as our evaluation metric to select the optimal values for C (regularization parameter), gamma (kernel coefficient). Recall score was selected to optimize the model for sensitivity in predicting high-risk cases. All explanatory variables were numerical and were standardized via StandardScaler prior to fitting. The Python programming language and the following Python packages were used to perform the analysis: requests [@reitz2023requests], numpy [@harris2020array], Pandas [@mckinney2010data], pandera [@niels_bantilan_2023_pandera], altair [@vanderplas2018altair], matplotlib [@hunter2007matplotlib], seaborn [@waskom2021seaborn], deepchecks [@deepchecks], scikit-learn [@pedregosa2011scikit], and scipy [@virtanen2020scipy].
 
 # Results
 
 ## Split Data
 
-Ahmed's Maternal Health Risk dataset was read into a data frame and split 70:30 into a training dataset and testing dataset, respectively. The training dataset was used to build and train the model, and the test data was maintained separately for objective evaluation of the model's performance. A random seed was saved to ensure reproducibility of the data split.
+Ahmed's Maternal Health Risk dataset was read into a data frame and split 70:30 into a training dataset and testing dataset, respectively. The training dataset consisted of `{python} len(train_df)` patients and was used to build and train the model. The test dataset consisted of `{python} len(test_df)` patients and was used to  maintained separately for objective evaluation of the model's performance. A random seed was saved to ensure reproducibility of the data split.
 
-Raw dataset preview (static reference to the locally cached file).
+```{python}
+#| label: tbl-raw-data
+#| tbl-cap: "Raw Maternal Health Risk Data (first 10 rows)"
+raw_data.head(10)
+```
 
-: Raw Maternal Health Risk Data {#tbl-raw-data}
-
-| Resource | Location |
-| --- | --- |
-| Raw dataset (CSV) | [../data/raw/Maternal Health Risk Data Set.csv](../data/raw/Maternal%20Health%20Risk%20Data%20Set.csv) |
-
-
-Training split stored locally (no runtime execution required).
-
-: Training Data Split {#tbl-train-data}
-
-| Resource | Location |
-| --- | --- |
-| Training split CSV | [../data/processed/maternal_health_risk_train.csv](../data/processed/maternal_health_risk_train.csv) |
-
-Testing split stored locally.
-
-: Testing Data Split {#tbl-test-data}
-
-| Resource | Location |
-| --- | --- |
-| Testing split CSV | [../data/processed/maternal_health_risk_test.csv](../data/processed/maternal_health_risk_test.csv) |
-
-Class counts are available in the precomputed training split (no code execution needed during render).
-
-: Risk Level Counts in Training Data {#tbl-risk-counts}
-
-| Resource | Location |
-| --- | --- |
-| Training split with risk labels | [../data/processed/maternal_health_risk_train.csv](../data/processed/maternal_health_risk_train.csv) |
+```{python}
+#| label: tbl-risk-counts
+#| tbl-cap: "Risk Level Counts in Training Data"
+train_df['RiskLevel'].value_counts().to_frame(name='Count')
+```
 
 ## EDA
-Preliminary exploratory data analysis (EDA) was performed to briefly examine each explanatory variable. Previous research have described hypertension as a complication risk; therefore, we dropped diastolic BP for the more commonly significant systolic.  Distributions of each explanatory variable were plotted using histograms and coloured according to risk levels @fig-eda-distributions (blue: high risk, green: medium risk, orange: low risk). The plotted distibutions were visually distinct across risk levels. Thus, we continued to fit our model with the remaining features.
+Preliminary exploratory data analysis (EDA) was performed to briefly examine each explanatory variable. Previous research has described hypertension as a complication risk; therefore, we elected to keep systolic systolic blood pressure over diastolic blood pressure. This is because systolic blood pressure is a key measurement used to assess hypertension, whereas diastolic blood pressure is often less clinically relavent. Distributions of each explanatory variable were plotted using histograms and coloured according to risk levels @fig-eda-distributions (blue: high risk, green: medium risk, orange: low risk). The plotted distributions were visually distinct across risk levels. Thus, we continued to fit our model with the remaining features.
 
 ![Feature Distributions by Risk Level](../results/figures/feature_densities_by_risklevel.png){#fig-eda-distributions fig-cap="Comparison of the distributions of features contributing to the risk intensity level."}
 
@@ -146,28 +136,13 @@ The target variable `RiskLevel` is a categorical variable representing the mater
 
 To ensure that the target variable is not severely imbalanced, we applied a minimum class frequency check (at least 5% per class). This avoids situations where certain risk levels are too rare for the model to learn meaningful patterns, which could lead to biased predictions.
 
-```{python}
-print("Data shape before validation:")
-print(data.shape)
-
-print("Data shape after validation:")
-print(validated_data.shape)
-```
-
 #### Validation Range Results
 
-We dropped 4 observations during our preliminary data validation, as these rows contain invalid data entires that would introduce noise into our model. More details about which observations have been dropped can be found under `validation_errors.log` in the `notebooks` folder. 
+We dropped 4 observations during our preliminary data validation, as these rows contain invalid data entries that would introduce noise into our model. More details about which observations have been dropped can be found under `validation_errors.log` in the `notebooks` folder. 
 
 The validation log shows that the dropped observations include:
 - 2 rows with `Age` outside the expected range (10-65 years): ages 66 and 70
 - 2 rows with `HeartRate` of 7 bpm, which seems an impossibility for living people
-
-```{python}
-#| eval: true
-#| output: false
-raw_data = pd.read_csv("../data/raw/Maternal Health Risk Data Set.csv")
-n_duplicates = raw_data.duplicated().sum()
-```
 
 #### Duplicate Observations
 
@@ -183,39 +158,21 @@ The dataset passed all other validation checks, namely:
 - No outliers: all numeric values fall within reasonable ranges (with the exception of the 4 dropped rows)
 - Target/response variable follows expected distribution
 
-```{python}
-#| eval: true
-#| output: false
-train_describe = pd.read_csv("../results/tables/train_describe.csv", index_col=0)
-n_obs = int(train_describe["count"].iloc[0])
-```
-
 Our final validated dataset `validated_data` contains `{python} n_obs` observations. 
 
 ### Correlations
 
+To ensure that our predictive modeling process does not rely on spurious or overly strong relationships, we performed two correlation-based data validation checks on the training split only (to avoid test-set leakage):
+
 #### Target-Feature Correlation
+
+We first applied the `FeatureLabelCorrelation` check from Deepchecks (used Pandera for a similar test if Deepchecks can't be used). This check evaluates whether any feature has an strong relationship with the target variable (RiskLevel), which could be a sign of target leakage. Threshold used: correlation < 0.9. All features met the threshold. No anomalous or suspiciously high correlations were detected between features and the target.
 
 #### Feature-Feature Correlation
 
-#### Correlation Validation Results
+We also used Deepchecks' `FeatureFeatureCorrelation` to check for unusually high correlations between pairs of features, which may indicate redundancy or multicolinearity in modeling. Threshold used: correlation < 0.95. Feature–feature correlations met the threshold. No pairs of features exhibited extremely high correlation that would require removal or special handling.
 
-To ensure that our predictive modeling process does not rely on spurious or overly strong relationships, we performed two correlation-based data validation checks on the training split only (to avoid test-set leakage):
-
-1. Target–Feature Correlation Check
-
-We applied the FeatureLabelCorrelation check from Deepchecks (used Pandera for a similar test if Deepchecks can't be used). This check evaluates whether any feature has an strong relationship with the target variable (RiskLevel), which could be a sign of target leakage.
-Threshold used: correlation < 0.9
-
-Result:
-All features met the threshold. No anomalous or suspiciously high correlations were detected between features and the target.
-
-2. Feature–Feature Correlation Check
-
-We also used Deepchecks' FeatureFeatureCorrelation` to check for unusually high correlations between pairs of features, which may indicate redundancy or multicolinearity in modeling.
-
-Result:
-Feature–feature correlations met the threshold. No pairs of features exhibited extremely high correlation that would require removal or special handling.
+![Feature Correlation Heatmap](../results/figures/correlation_heatmap.png){#fig-corr-heatmap fig-cap="Heatmap showing correlations between features in the training dataset."}
 
 ### Overall Conclusion
 
@@ -228,7 +185,6 @@ We selected a Support Vector Classifier (SVC) model for this classification task
 ```{python}
 #| label: tbl-svc-score
 #| tbl-cap: "Class-wise AUC"
-auc_scores = pd.read_csv("../results/tables/auc_scores.csv", index_col=0)
 auc_scores
 ```
 
@@ -243,45 +199,15 @@ In order to classify clinical risk levels, recall score was selected as the pref
 
 ![Classifier ROC Curves](../results/figures/roc_curves.png){#fig-roc-curve fig-cap="ROC curve of model performance on test data."}
 
-```{python}
-#| eval: true
-#| output: false
-# Load performance metrics
-test_scores = pd.read_csv("../results/tables/test_scores.csv")
-auc_scores = pd.read_csv("../results/tables/auc_scores.csv", index_col=0)
-confusion = pd.read_csv("../results/tables/confusion_matrix.csv", index_col=0)
-
-# Extract metrics
-recall_weighted = round(test_scores["recall_weighted"].iloc[0], 4)
-accuracy = round(test_scores["accuracy"].iloc[0], 4)
-
-# AUC scores
-auc_high = round(auc_scores.loc["AUC", "high risk"], 4)
-auc_low = round(auc_scores.loc["AUC", "low risk"], 4)
-auc_mid = round(auc_scores.loc["AUC", "mid risk"], 4)
-
-# Confusion matrix analysis
-high_risk_correct = confusion.loc["high risk", "high risk"]
-high_risk_as_low = confusion.loc["high risk", "low risk"]
-high_risk_as_mid = confusion.loc["high risk", "mid risk"]
-high_risk_total = high_risk_correct + high_risk_as_low + high_risk_as_mid
-high_risk_recall = round(high_risk_correct / high_risk_total, 3)
-
-# Total test cases and correct predictions
-total_test = confusion.sum().sum()
-total_correct = confusion.iloc[0, 0] + confusion.iloc[1, 1] + confusion.iloc[2, 2]
-total_high_errors = high_risk_as_low + high_risk_as_mid
-```
-
 ### Summary of Model Results
 
 The final SVC classifier performed fairly well on an unseen test data set, with a weighted recall score of `{python} recall_weighted` and an overall accuracy of `{python} accuracy`. Out of the `{python} total_test` test data cases, it correctly predicted `{python} total_correct` cases. The model showed particularly strong performance in identifying high-risk pregnancies, achieving an AUC of `{python} auc_high` for the high-risk class, compared to `{python} auc_low` for low-risk class and `{python} auc_mid` for medium-risk class. It correctly identifies `{python} high_risk_correct` out of `{python} high_risk_total` actual high-risk pregnancies resulting in a `{python} round(high_risk_recall * 100)` % recall for high risk. There were `{python} total_high_errors` notable errors in which true high-risk cases were misclassified as `{python} high_risk_as_mid` medium-risk and `{python} high_risk_as_low` low-risk.
 
 # Discussion
 
-The latest interation of the SVC model delivered promising results and demonstrated considerable accuracy when classifying high-risk individuals. Correct identification of high-risk individuals is pivotal in the prevention and early intervention of pregnancy complications, such as hemorrhaging and eclampsia. The model's ability to correctly classify high-risk inviduals is encouraging, and future interations could help alert doctors or emergency responders to improve accessibility for underserved communities.
+The latest iteration of the SVC model delivered promising results and demonstrated considerable accuracy when classifying high-risk individuals. Correct identification of high-risk individuals is pivotal in the prevention and early intervention of pregnancy complications, such as hemorrhaging and eclampsia. The model's ability to correctly classify high-risk individuals is encouraging, and future iterations could help alert doctors or emergency responders to improve accessibility for underserved communities.
 
-Further refinement is required, however, as the model made `{python} total_high_errors` notable classification errors during testing. These truely high-risk cases were misclassified as `{python} high_risk_as_mid` medium-risk and `{python} high_risk_as_low` low-risk. In reality, these false negatives are gaps where high-risk individuals could be overlooked and not prioritized appropriately. Future versions should seek to improve the model's sensitivity to high-risk cases and better differentiate between medium and low-risk categories before it is ready to be implemented in clinical settings.
+Further refinement is required, however, as the model made `{python} total_high_errors` notable classification errors during testing. These truly high-risk cases were misclassified as `{python} high_risk_as_mid` medium-risk and `{python} high_risk_as_low` low-risk. In reality, these false negatives are gaps where high-risk individuals could be overlooked and not prioritized appropriately. Future versions should seek to improve the model's sensitivity to high-risk cases and better differentiate between medium and low-risk categories before it is ready to be implemented in clinical settings.
 
 A limitation of this model is that other devices and their sensors may have different measurement accuracies and calibration standards. The model was trained on data collected from specific IoT devices in rural Bangladesh; therefore, its performance may vary when applied to data from different devices or populations. Additionally, other countries may have health information documentation standards that differ from Bangladesh. Future work should consider validating the model across diverse datasets and device types to ensure its robustness and generalizability.
 
