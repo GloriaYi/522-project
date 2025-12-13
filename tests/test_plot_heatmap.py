@@ -89,7 +89,6 @@ def test_plot_heatmap_invalid_corr_type():
 # Case 3: Error cases
 # save_path is not valid
 def test_plot_heatmap_invalid_path():
-    """Error: invalid save_path should raise an exception."""
     corr = pd.DataFrame([[1, 0.1], [0.1, 1]])
 
     invalid_paths = [
