@@ -9,32 +9,13 @@ import pandera.pandas as pa
 import logging
 import json
 import os
+import sys
 
-def validate_file_format(file_path, expected_file_extension):
-    """
-    Function to check if the file has the correct format,
-    given the file path and expected file extension.
-    """
-    if not file_path.endswith(expected_file_extension):
-        error_msg = "Invalid file format."
-        raise ValueError(error_msg)
+ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+sys.path.insert(0, ROOT)
 
-def validate_column_names(data, expected_columns):
-    """
-    Function to check if the DataFrame has the correct column names,
-    given the DataFrame and the expected column names.
-    """
-    actual_columns = data.columns.tolist()
-    
-    missing_columns = set(expected_columns) - set(actual_columns)
-    if missing_columns:
-        error_msg = "Missing required columns."
-        raise ValueError(error_msg)
-
-    extra_columns = set(actual_columns) - set(expected_columns)
-    if extra_columns:
-        error_msg = "Unexpected extra columns found."
-        raise ValueError(error_msg)
+from src.validate_file_format import validate_file_format
+from src.validate_column_names import validate_column_names
 
 @click.command()
 @click.option('--raw-data', type=str, help="Path to raw data CSV file")

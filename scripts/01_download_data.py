@@ -7,6 +7,12 @@ import click
 import requests
 import zipfile
 import os
+import sys
+
+ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+sys.path.insert(0, ROOT)
+
+from src.create_directory import create_directory
 
 @click.command()
 @click.option('--url', type=str, help="URL of dataset to be downloaded")
@@ -32,7 +38,7 @@ def main(url, write_to):
     """
 
     # create directory if it does not already exist
-    os.makedirs(write_to, exist_ok=True)
+    create_directory(write_to)
     
     # extract filename from URL
     file_name = url.split('/')[-1]
