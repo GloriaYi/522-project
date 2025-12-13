@@ -9,15 +9,7 @@ import pandera.pandas as pa
 import logging
 import json
 import os
-
-def validate_file_format(file_path, expected_file_extension):
-    """
-    Function to check if the file has the correct format,
-    given the file path and expected file extension.
-    """
-    if not file_path.endswith(expected_file_extension):
-        error_msg = "Invalid file format."
-        raise ValueError(error_msg)
+from src.validate_file_format import validate_file_format
 
 def validate_column_names(data, expected_columns):
     """
