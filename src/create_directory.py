@@ -1,4 +1,5 @@
 # create_directory.py
+# Creates a directory, if it does not exist.
 
 import os
 
